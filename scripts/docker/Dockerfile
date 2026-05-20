@@ -13,6 +13,11 @@ ARG BUILD_TAGS
 WORKDIR /go/src/github.com/hashicorp/vault
 COPY . .
 
+RUN git init -q && \
+    git config user.email "build@example.com" && \
+    git config user.name "Build" && \
+    git commit -q --allow-empty -m "build"
+
 RUN make bootstrap \
   && CGO_ENABLED=$CGO_ENABLED BUILD_TAGS="${BUILD_TAGS}" VAULT_DEV_BUILD=1 sh -c "'./scripts/build.sh'"
 

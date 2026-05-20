@@ -1,3 +1,15 @@
+VAULT_VERSION := 1.0.0
+
+podman-push:
+	podman push quay.io/rhn-support-gong/vault:$(VAULT_VERSION)
+
+podman-build: #run 'make podman-build BUILD_TAGS="ui"' to include ui in the image
+	podman build \
+	--build-arg VERSION=$(GO_VERSION_MIN) \
+	--build-arg BUILD_TAGS="$(BUILD_TAGS)" \
+	--platform linux/amd64 \
+	-f scripts/docker/Dockerfile -t quay.io/rhn-support-gong/vault:$(VAULT_VERSION) .
+
 # Determine this makefile's path.
 # Be sure to place this BEFORE `include` directives, if any.
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
