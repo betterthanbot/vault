@@ -20,6 +20,10 @@ cd "$DIR"
 # Set build tags
 BUILD_TAGS="${BUILD_TAGS:-"vault"}"
 
+# Read the real vault version so scanners correctly identify this binary
+# and don't flag already-fixed CVEs against the Go pseudo-version.
+BUILD_VERSION="$(cat "${DIR}/version/VERSION" | tr -d '[:space:]')"
+
 # Get the git commit
 GIT_COMMIT="$("$SOURCE_DIR"/ci-helper.sh revision)"
 GIT_DIRTY="$(test -n "`git status --porcelain`" && echo "+CHANGES" || true)"
@@ -42,8 +46,9 @@ mkdir -p bin/
 # Build!
 echo "==> Building..."
 ${GO_CMD} build \
+    -buildvcs=false \
     -gcflags "${GCFLAGS}" \
-    -ldflags "${LD_FLAGS} -X github.com/hashicorp/vault/version.GitCommit='${GIT_COMMIT}${GIT_DIRTY}' -X github.com/hashicorp/vault/version.BuildDate=${BUILD_DATE}" \
+    -ldflags "${LD_FLAGS} -X github.com/hashicorp/vault/version.GitCommit='${GIT_COMMIT}${GIT_DIRTY}' -X github.com/hashicorp/vault/version.BuildDate=${BUILD_DATE} -X github.com/hashicorp/vault/version.Version=${BUILD_VERSION}" \
     -o "bin/vault" \
     -tags "${BUILD_TAGS}" \
     .

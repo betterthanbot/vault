@@ -131,6 +131,7 @@ website/components/node_modules
 .buildcache/
 .releaser/
 *.log
+!cve.log
 
 tools/godoctests/.bin
 tools/gonilnilfunctions/.bin
