@@ -1,4 +1,4 @@
-VAULT_VERSION := 1.0.0
+VAULT_VERSION := 1.0.2
 
 podman-push:
 	podman push quay.io/rhn-support-gong/vault:$(VAULT_VERSION)

@@ -23,7 +23,7 @@ RUN make bootstrap \
 
 # Docker Image
 
-FROM alpine:3.13
+FROM alpine:3
 
 # Create a vault user and group first so the IDs get set the same way,
 # even as the rest of this may change over time.
@@ -31,8 +31,8 @@ RUN addgroup vault && \
     adduser -S -G vault vault
 
 # Set up certificates, our base tools, and Vault.
-RUN set -eux; \
-    apk add --no-cache ca-certificates libcap su-exec dumb-init tzdata
+# apk add --upgrade ensures latest patched versions of each package.
+RUN apk update && apk add --upgrade --no-cache ca-certificates libcap su-exec dumb-init tzdata
 
 COPY --from=builder /go/src/github.com/hashicorp/vault/bin/vault /bin/vault
 
@@ -65,6 +65,12 @@ EXPOSE 8200
 # capability so that Vault can mlock memory.
 COPY ./scripts/docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
+
+# CIS Docker 4.6 - add a HEALTHCHECK so the container reports its own health.
+# Uses wget (available in Alpine busybox) to probe the Vault health endpoint.
+# sealedcode/uninitcode=204 so the check passes even before unseal/init.
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
+    CMD wget -qO- http://localhost:8200/v1/sys/health?standbyok=true\&sealedcode=204\&uninitcode=204 || exit 1
 
 # Use the Vault user as the default user for starting this container.
 USER vault

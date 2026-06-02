@@ -1,4 +1,4 @@
-Scan results for image: quay.io/rhn-support-gong/vault:1.0.0
+Scan results for image: quay.io/rhn-support-gong/vault:1.0.2
 (TOTAL-COMPONENTS: 1, TOTAL-VULNERABILITIES: 2, LOW: 1, MODERATE: 1, IMPORTANT: 0, CRITICAL: 0)
 
 +---------------------------+---------+---------------+----------+------+------------------------------------------------+---------------+----------+---------------+
